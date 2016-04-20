@@ -9,7 +9,7 @@ object FoldLeft {
     }
 
   def main(args: Array[String]): Unit = {
-    println(foldLeft(List(1, 2, 3, 4, 5), 0)(_ + _))
+    println(foldLeft(List("1", "2", "3", "4", "5"), "")("(" + _ + _ + ")"))
     println(foldLeft(List(5), 0)(_ + _))
   }
 }
