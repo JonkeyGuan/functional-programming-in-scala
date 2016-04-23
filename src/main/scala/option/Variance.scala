@@ -12,7 +12,11 @@ object Variance {
 
   def main(args: Array[String]): Unit = {
     val l = List(1, 20, 3, 45, 5, 6, 7.0)
+    val l1 = Nil: List[Double]
     println(mean(l))
     println(variance(l))
+
+    println(mean(l1))
+    println(variance(l1))
   }
 }
