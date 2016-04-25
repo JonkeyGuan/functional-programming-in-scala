@@ -39,6 +39,8 @@ sealed trait Stream[+A] {
 
   def forAll(p: A => Boolean): Boolean = foldRight(true)((a, b) => p(a) && b)
 
+  def takeWhileByFoldRight(p: A => Boolean): Stream[A] = foldRight(empty[A])((a, b) => if (p(a)) cons(a, b) else b)
+
 }
 
 case object Empty extends Stream[Nothing]
@@ -75,6 +77,9 @@ object Run {
 
     println(s.forAll(_ % 1 == 0))
     println(s.forAll(_ % 2 == 0))
+
+    println(s.takeWhileByFoldRight(_ % 2 == 0))
+    println(s.takeWhileByFoldRight(_ % 2 == 0).toList)
   }
 
 }
