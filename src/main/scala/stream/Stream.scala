@@ -41,6 +41,7 @@ sealed trait Stream[+A] {
 
   def takeWhileByFoldRight(p: A => Boolean): Stream[A] = foldRight(empty[A])((a, b) => if (p(a)) cons(a, b) else b)
 
+  def headOption: Option[A] = foldRight(None: Option[A])((a, b) => Some(a))
 }
 
 case object Empty extends Stream[Nothing]
@@ -80,6 +81,9 @@ object Run {
 
     println(s.takeWhileByFoldRight(_ % 2 == 0))
     println(s.takeWhileByFoldRight(_ % 2 == 0).toList)
+    
+    println(s.headOption)
+    println(Stream().headOption)
   }
 
 }
