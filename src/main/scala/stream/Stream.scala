@@ -29,6 +29,16 @@ sealed trait Stream[+A] {
     case _                       => empty
   }
 
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    this match {
+      case Cons(h, t) => f(h(), t().foldRight(z)(f))
+      case _          => z
+    }
+
+  def exists(p: A => Boolean): Boolean = foldRight(false)((a, b) => p(a) || b)
+
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a, b) => p(a) && b)
+
 }
 
 case object Empty extends Stream[Nothing]
@@ -62,6 +72,9 @@ object Run {
 
     println(s.takeWhile(_ % 2 == 0))
     println(s.takeWhile(_ % 2 == 0).toList)
+
+    println(s.forAll(_ % 1 == 0))
+    println(s.forAll(_ % 2 == 0))
   }
 
 }
