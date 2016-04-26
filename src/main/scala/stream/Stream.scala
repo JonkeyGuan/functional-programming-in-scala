@@ -42,6 +42,14 @@ sealed trait Stream[+A] {
   def takeWhileByFoldRight(p: A => Boolean): Stream[A] = foldRight(empty[A])((a, b) => if (p(a)) cons(a, b) else b)
 
   def headOption: Option[A] = foldRight(None: Option[A])((a, b) => Some(a))
+
+  def map[B](f: A => B): Stream[B] = foldRight(empty[B])((a, b) => cons(f(a), b))
+
+  def filter(f: A => Boolean): Stream[A] = foldRight(empty[A])((a, b) => if (f(a)) cons(a, b) else b)
+
+  def append[B >: A](s: => Stream[B]): Stream[B] = foldRight(s)((a, b) => cons(a, b))
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(empty[B])((a, b) => f(a).append(b))
 }
 
 case object Empty extends Stream[Nothing]
@@ -81,9 +89,21 @@ object Run {
 
     println(s.takeWhileByFoldRight(_ % 2 == 0))
     println(s.takeWhileByFoldRight(_ % 2 == 0).toList)
-    
+
     println(s.headOption)
     println(Stream().headOption)
+
+    println(s.map(_ + 1))
+    println(s.map(_ + 1).toList)
+
+    println(s.filter(_ % 2 == 0))
+    println(s.filter(_ % 2 == 0).toList)
+
+    println(s.append(Stream(11, 12, 13, 14)))
+    println(s.append(Stream(11, 12, 13, 14)).toList)
+    
+    println(s.flatMap(x => Stream(x + 100)))
+    println(s.flatMap(x => Stream(x + 100)).toList)
   }
 
 }
