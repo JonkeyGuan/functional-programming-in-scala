@@ -72,6 +72,11 @@ object Stream {
   def from(n: Int): Stream[Int] = Stream.cons(n, from(n + 1))
 
   def fibs(n: Int, n1: Int): Stream[Int] = Stream.cons(n, fibs(n1, n + n1))
+
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((a, s)) => cons(a, unfold(s)(f))
+    case _            => empty
+  }
 }
 
 object Run {
@@ -118,6 +123,10 @@ object Run {
 
     println(Stream.fibs(0, 1).take(10))
     println(Stream.fibs(0, 1).take(10).toList)
+
+    println(Stream.unfold(0)(z => Some((z, z + 1))).take(10))
+    println(Stream.unfold(0)(z => Some((z, z + 1))).take(10).toList)
+
   }
 
 }
