@@ -70,6 +70,8 @@ object Stream {
   def constant[A](a: A): Stream[A] = Stream.cons(a, constant(a))
 
   def from(n: Int): Stream[Int] = Stream.cons(n, from(n + 1))
+
+  def fibs(n: Int, n1: Int): Stream[Int] = Stream.cons(n, fibs(n1, n + n1))
 }
 
 object Run {
@@ -113,6 +115,9 @@ object Run {
 
     println(Stream.from(12).take(10))
     println(Stream.from(12).take(10).toList)
+
+    println(Stream.fibs(0, 1).take(10))
+    println(Stream.fibs(0, 1).take(10).toList)
   }
 
 }
