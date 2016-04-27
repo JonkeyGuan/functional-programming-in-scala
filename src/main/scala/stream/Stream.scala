@@ -67,6 +67,8 @@ object Stream {
 
   def apply[A](as: A*): Stream[A] = if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
 
+  def constant[A](a: A): Stream[A] = Stream.cons(a, constant(a))
+  
 }
 
 object Run {
@@ -104,6 +106,9 @@ object Run {
     
     println(s.flatMap(x => Stream(x + 100)))
     println(s.flatMap(x => Stream(x + 100)).toList)
+    
+    println(Stream.constant(12).take(10))
+    println(Stream.constant(12).take(10).toList)
   }
 
 }
