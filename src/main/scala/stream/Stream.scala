@@ -64,6 +64,11 @@ sealed trait Stream[+A] {
     case Cons(h, t) if (f(h())) => Some((h(), t()))
     case _                      => None
   }
+
+  def zipWith[B, C](s: Stream[B])(f: (A, B) => C): Stream[C] = unfold(this, s) {
+    case (Cons(h1, t1), Cons(h2, t2)) => Some((f(h1(), h2()), (t1(), t2())))
+    case _                            => None
+  }
 }
 
 case object Empty extends Stream[Nothing]
@@ -164,6 +169,9 @@ object Run {
 
     println(s.takeWhileByUnfold(x => x < 5))
     println(s.takeWhileByUnfold(x => x < 5).toList)
+
+    println(s.zipWith(Stream(11, 12, 13, 14, 15))(_ + _))
+    println(s.zipWith(Stream(11, 12, 13, 14, 15))(_ + _).toList)
   }
 
 }
