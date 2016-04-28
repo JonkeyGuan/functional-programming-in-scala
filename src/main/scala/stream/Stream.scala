@@ -55,6 +55,11 @@ sealed trait Stream[+A] {
     case Cons(h, t) => Some(f(h()), t())
     case _          => None
   }
+
+  def takeByUnfold(n: Int): Stream[A] = unfold((n, this)) {
+    case (i, Cons(h, t)) if i > 0 => Some((h(), (i - 1, t())))
+    case _                        => None
+  }
 }
 
 case object Empty extends Stream[Nothing]
@@ -149,6 +154,9 @@ object Run {
 
     println(s.mapByUnfold(_ + 1))
     println(s.mapByUnfold(_ + 1).toList)
+
+    println(s.takeByUnfold(3))
+    println(s.takeByUnfold(3).toList)
   }
 
 }
