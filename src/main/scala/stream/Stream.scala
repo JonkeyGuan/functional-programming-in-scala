@@ -82,6 +82,8 @@ object Stream {
     case Some((a, s)) => cons(a, unfold(s)(f))
     case _            => empty
   }
+
+  def fromByUnfold(n: Int): Stream[Int] = unfold(n)(n => Some(n, n + 1))
 }
 
 object Run {
@@ -135,6 +137,8 @@ object Run {
     println(s.mapByUnfold(_ + 1))
     println(s.mapByUnfold(_ + 1).toList)
 
+    println(Stream.fromByUnfold(12).take(10))
+    println(Stream.fromByUnfold(12).take(10).toList)
   }
 
 }
