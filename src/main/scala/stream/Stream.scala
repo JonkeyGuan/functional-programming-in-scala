@@ -24,9 +24,8 @@ sealed trait Stream[+A] {
   }
 
   def takeWhile(p: A => Boolean): Stream[A] = this match {
-    case Cons(h, t) if (p(h()))  => cons(h(), t().takeWhile(p))
-    case Cons(h, t) if (!p(h())) => t().takeWhile(p)
-    case _                       => empty
+    case Cons(h, t) if (p(h())) => cons(h(), t().takeWhile(p))
+    case _                      => empty
   }
 
   def foldRight[B](z: => B)(f: (A, => B) => B): B =
@@ -59,6 +58,11 @@ sealed trait Stream[+A] {
   def takeByUnfold(n: Int): Stream[A] = unfold((n, this)) {
     case (i, Cons(h, t)) if i > 0 => Some((h(), (i - 1, t())))
     case _                        => None
+  }
+
+  def takeWhileByUnfold(f: A => Boolean): Stream[A] = unfold(this) {
+    case Cons(h, t) if (f(h())) => Some((h(), t()))
+    case _                      => None
   }
 }
 
@@ -107,8 +111,8 @@ object Run {
     println(s.take(3))
     println(s.take(3).toList)
 
-    println(s.takeWhile(_ % 2 == 0))
-    println(s.takeWhile(_ % 2 == 0).toList)
+    println(s.takeWhile(x => x < 5))
+    println(s.takeWhile(x => x < 5).toList)
 
     println(s.forAll(_ % 1 == 0))
     println(s.forAll(_ % 2 == 0))
@@ -157,6 +161,9 @@ object Run {
 
     println(s.takeByUnfold(3))
     println(s.takeByUnfold(3).toList)
+
+    println(s.takeWhileByUnfold(x => x < 5))
+    println(s.takeWhileByUnfold(x => x < 5).toList)
   }
 
 }
