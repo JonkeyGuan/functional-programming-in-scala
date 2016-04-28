@@ -84,6 +84,10 @@ object Stream {
   }
 
   def fromByUnfold(n: Int): Stream[Int] = unfold(n)(n => Some(n, n + 1))
+
+  def constantByUnfold[A](a: A): Stream[A] = unfold(a)(a => Some(a, a))
+
+  def onesByUnfold: Stream[Int] = unfold(1)(_ => Some(1, 1))
 }
 
 object Run {
@@ -134,11 +138,17 @@ object Run {
     println(Stream.unfold(0)(z => Some((z, z + 1))).take(10))
     println(Stream.unfold(0)(z => Some((z, z + 1))).take(10).toList)
 
-    println(s.mapByUnfold(_ + 1))
-    println(s.mapByUnfold(_ + 1).toList)
-
     println(Stream.fromByUnfold(12).take(10))
     println(Stream.fromByUnfold(12).take(10).toList)
+
+    println(Stream.constantByUnfold(12).take(10))
+    println(Stream.constantByUnfold(12).take(10).toList)
+
+    println(Stream.onesByUnfold.take(10))
+    println(Stream.onesByUnfold.take(10).toList)
+
+    println(s.mapByUnfold(_ + 1))
+    println(s.mapByUnfold(_ + 1).toList)
   }
 
 }
