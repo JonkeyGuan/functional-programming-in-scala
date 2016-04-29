@@ -23,6 +23,12 @@ sealed trait Stream[+A] {
     case _                    => empty
   }
 
+  @annotation.tailrec
+  final def drop(n: Int): Stream[A] = this match {
+    case Cons(_, t) if n > 0 => t().drop(n - 1)
+    case _                   => this
+  }
+
   def takeWhile(p: A => Boolean): Stream[A] = this match {
     case Cons(h, t) if (p(h())) => cons(h(), t().takeWhile(p))
     case _                      => empty
@@ -76,6 +82,20 @@ sealed trait Stream[+A] {
     case (Cons(h1, t1), Empty)        => Some((Some(h1()), None), (t1(), empty))
     case (Cons(h1, t1), Cons(h2, t2)) => Some((Some(h1()), Some(h2())), (t1(), t2()))
   }
+
+  def tails: Stream[Stream[A]] =
+    unfold(this) {
+      case Empty => None
+      case s     => Some((s, s drop 1))
+    } append Stream(empty)
+
+  def startsWith[A](s: Stream[A]): Boolean =
+    zipAll(s).takeWhile(!_._2.isEmpty) forAll {
+      case (h, h2) => h == h2
+    }
+
+  def hasSubsequence[A](s: Stream[A]): Boolean = tails exists (_ startsWith s)
+
 }
 
 case object Empty extends Stream[Nothing]
@@ -122,6 +142,9 @@ object Run {
 
     println(s.take(3))
     println(s.take(3).toList)
+
+    println(s.drop(3))
+    println(s.drop(3).toList)
 
     println(s.takeWhile(x => x < 5))
     println(s.takeWhile(x => x < 5).toList)
@@ -182,6 +205,15 @@ object Run {
 
     println(s.zipAll(Stream(11, 12, 13, 14, 15)))
     println(s.zipAll(Stream(11, 12, 13, 14, 15)).toList)
+
+    println(s.tails)
+    println(s.tails.toList.map(_.toList))
+
+    println(s.startsWith(Stream(1, 2, 3, 4, 5)))
+    println(s.startsWith(Stream(1, 12, 3, 4, 5)))
+
+    println(s.hasSubsequence(Stream(3, 4, 5)))
+    println(s.hasSubsequence(Stream(3, 44, 5)))
   }
 
 }
