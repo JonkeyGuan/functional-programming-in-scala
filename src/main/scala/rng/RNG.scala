@@ -85,6 +85,11 @@ object RNG {
   val randIntDouble: Rand[(Int, Double)] = both(int, double)
 
   val randDoubleInt: Rand[(Double, Int)] = both(double, int)
+
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
+
+  def intsBySequence(count: Int): Rand[List[Int]] = sequence(List.fill(count)(int))
+
 }
 
 object Run {
@@ -123,6 +128,9 @@ object Run {
 
     println("randDoubleInt" + randDoubleInt(rng))
     println("randDoubleInt" + randDoubleInt(rng))
+
+    println("intsBySequence: " + intsBySequence(5)(rng))
+    println("intsBySequence: " + intsBySequence(5)(rng))
 
   }
 
