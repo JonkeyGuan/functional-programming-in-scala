@@ -70,6 +70,21 @@ object RNG {
   def nonNegativeEven: Rand[Int] = map(nonNegativeInt)(i => i - i % 2)
 
   def doubleByMap: Rand[Double] = map(nonNegativeInt)(i => i / (Int.MaxValue.toDouble + 1))
+
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = {
+    rng =>
+      {
+        val (a, rnga) = ra(rng)
+        val (b, rngb) = rb(rnga)
+        (f(a, b), rngb)
+      }
+  }
+
+  def both[A, B](ra: Rand[A], rb: Rand[B]): Rand[(A, B)] = map2(ra, rb)((_, _))
+
+  val randIntDouble: Rand[(Int, Double)] = both(int, double)
+
+  val randDoubleInt: Rand[(Double, Int)] = both(double, int)
 }
 
 object Run {
@@ -77,31 +92,38 @@ object Run {
   def main(args: Array[String]): Unit = {
     import RNG._
     val rng = Simple(System.currentTimeMillis())
-    println(rng)
+    println("rng: " + rng)
 
-    println(nonNegativeInt(rng))
-    println(nonNegativeInt(rng))
+    println("nonNegativeInt: " + nonNegativeInt(rng))
+    println("nonNegativeInt: " + nonNegativeInt(rng))
 
-    println(double(rng))
-    println(double(rng))
+    println("double: " + double(rng))
+    println("double: " + double(rng))
 
-    println(intDouble(rng))
-    println(intDouble(rng))
+    println("intDouble: " + intDouble(rng))
+    println("intDouble: " + intDouble(rng))
 
-    println(doubleInt(rng))
-    println(doubleInt(rng))
+    println("doubleInt: " + doubleInt(rng))
+    println("doubleInt: " + doubleInt(rng))
 
-    println(double3(rng))
-    println(double3(rng))
+    println("double3: " + double3(rng))
+    println("double3: " + double3(rng))
 
-    println(ints(5)(rng))
-    println(ints(5)(rng))
+    println("ints: " + ints(5)(rng))
+    println("ints: " + ints(5)(rng))
 
-    println(nonNegativeEven(rng))
-    println(nonNegativeEven(rng))
+    println("nonNegativeEven: " + nonNegativeEven(rng))
+    println("nonNegativeEven: " + nonNegativeEven(rng))
 
-    println(doubleByMap(rng))
-    println(doubleByMap(rng))
+    println("doubleByMap: " + doubleByMap(rng))
+    println("doubleByMap: " + doubleByMap(rng))
+
+    println("randIntDouble: " + randIntDouble(rng))
+    println("randIntDouble: " + randIntDouble(rng))
+
+    println("randDoubleInt" + randDoubleInt(rng))
+    println("randDoubleInt" + randDoubleInt(rng))
+
   }
 
 }
