@@ -20,6 +20,10 @@ object RNG {
     (if (i < 0) -(i + 1) else i, r)
   }
 
+  def double(rng: RNG): (Double, RNG) = {
+    val (i, r) = nonNegativeInt(rng)
+    (i / (Int.MaxValue.toDouble + 1), r)
+  }
 }
 
 object Run {
@@ -30,6 +34,7 @@ object Run {
     println(rng)
 
     println(nonNegativeInt(rng))
+    println(double(rng))
   }
 
 }
