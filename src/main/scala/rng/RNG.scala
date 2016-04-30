@@ -42,6 +42,17 @@ object RNG {
     val (d3, r3) = double(r2)
     ((d1, d2, d3), r3)
   }
+
+  def ints(count: Int)(rng: RNG): (List[Int], RNG) = {
+    def loop(count: Int, rng: RNG, ls: List[Int]): (List[Int], RNG) = {
+      if (count == 0) (ls, rng)
+      else {
+        val (i, r) = rng.nextInt
+        loop(count - 1, r, i :: ls)
+      }
+    }
+    loop(count, rng, List())
+  }
 }
 
 object Run {
@@ -52,10 +63,22 @@ object Run {
     println(rng)
 
     println(nonNegativeInt(rng))
+    println(nonNegativeInt(rng))
+
     println(double(rng))
+    println(double(rng))
+
     println(intDouble(rng))
+    println(intDouble(rng))
+
     println(doubleInt(rng))
+    println(doubleInt(rng))
+
     println(double3(rng))
+    println(double3(rng))
+
+    println(ints(5)(rng))
+    println(ints(5)(rng))
   }
 
 }
