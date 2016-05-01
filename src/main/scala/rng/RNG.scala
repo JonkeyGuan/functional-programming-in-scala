@@ -90,6 +90,18 @@ object RNG {
 
   def intsBySequence(count: Int): Rand[List[Int]] = sequence(List.fill(count)(int))
 
+  def flatMap[A, B](f: Rand[A])(g: A => Rand[B]): Rand[B] = {
+    sng =>
+      {
+        val (a, s1) = f(sng)
+        g(a)(s1)
+      }
+  }
+
+  def mapByFlatMap[A, B](s: Rand[A])(f: A => B): Rand[B] = flatMap(s)(a => unit(f(a)))
+
+  def map2ByFlatMap[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = flatMap(ra)(a => map(rb)(b => f(a, b)))
+
 }
 
 object Run {
