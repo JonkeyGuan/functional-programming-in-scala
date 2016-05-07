@@ -30,4 +30,18 @@ object State {
 
   def set[S](s: S): State[S, Unit] = State(_ => ((), s))
 
+  def main(args: Array[String]): Unit = {
+
+    val st = State[Int, Int](s => (s, s + 1))
+    println(st.run(1))
+
+    val st1 = for {
+      a <- State.get[Int]
+      _ <- State.set(22)
+      b <- State.get[Int]
+      _ <- State.modify((x: Int) => x + 10)
+      c <- State.get[Int]
+    } yield (a, b, c)
+    println(st1.run(1))
+  }
 }
