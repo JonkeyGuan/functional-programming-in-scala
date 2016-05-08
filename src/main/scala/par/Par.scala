@@ -98,6 +98,8 @@ object Par {
     }
   }
 
+  def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean = p(e).get == p2(e).get
+
   def main(args: Array[String]): Unit = {
 
     def sum(ints: IndexedSeq[Int]): Par[Int] =
@@ -142,6 +144,8 @@ object Par {
     println(run(es)(map3(unit(1), unit(2), unit(3))(_ + _ + _)).get)
     println(run(es)(map4(unit(1), unit(2), unit(3), unit(4))(_ + _ + _ + _)).get)
     println(run(es)(map5(unit(1), unit(2), unit(3), unit(4), unit(5))(_ + _ + _ + _ + _)).get)
+    println(equal(es)(unit(1), unit(1)))
+    println(equal(es)(unit(1), unit(2)))
   }
 
 }
