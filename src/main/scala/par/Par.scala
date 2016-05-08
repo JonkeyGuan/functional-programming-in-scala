@@ -68,6 +68,11 @@ object Par {
     sequence(fbs)
   }
 
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val pars: List[Par[List[A]]] = as map (asyncF((a: A) => if (f(a)) List(a) else List()))
+    map(sequence(pars))(_.flatten)
+  }
+
   def main(args: Array[String]): Unit = {
 
     def sum(ints: IndexedSeq[Int]): Par[Int] =
@@ -96,14 +101,19 @@ object Par {
         Par.map2WtihTimeout(Par.fork(sumWithTimeout(l)), Par.fork(sumWithTimeout(r)))(_ + _)
       }
 
+//    try {
+//      val sumItWtihTimeout = sumWithTimeout(1 to 10)
+//      println(run(es)(sumItWtihTimeout).get(1, TimeUnit.NANOSECONDS))
+//      es.shutdown()
+//    } catch {
+//      case e: Exception => println(e.toString())
+//    }
+
     println(run(es)(sortPar(unit(List(2, 1, 3, 4, 2)))).get)
     println(run(es)(map(unit(1))(_ + 100)).get)
     println(run(es)(sequence(List(unit(1), unit(2), unit(3)))).get)
     println(run(es)(parMap(List(1, 2, 3, 4, 5))(_ + 100)).get)
-
-    //    val sumItWtihTimeout = sumWithTimeout(1 to 10)
-    //    println(run(es)(sumItWtihTimeout).get(1, TimeUnit.NANOSECONDS))
-    //    es.shutdown()
+    println(run(es)(parFilter(List(1, 2, 3, 4, 5))(_ % 2 == 0)).get)
 
   }
 
