@@ -63,6 +63,11 @@ object Par {
 
   def sequence[A](ps: List[Par[A]]): Par[List[A]] = ps.foldRight[Par[List[A]]](unit(List()))((h, t) => map2(h, t)(_ :: _))
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = {
+    val fbs: List[Par[B]] = ps.map(asyncF(f))
+    sequence(fbs)
+  }
+
   def main(args: Array[String]): Unit = {
 
     def sum(ints: IndexedSeq[Int]): Par[Int] =
@@ -94,6 +99,7 @@ object Par {
     println(run(es)(sortPar(unit(List(2, 1, 3, 4, 2)))).get)
     println(run(es)(map(unit(1))(_ + 100)).get)
     println(run(es)(sequence(List(unit(1), unit(2), unit(3)))).get)
+    println(run(es)(parMap(List(1, 2, 3, 4, 5))(_ + 100)).get)
 
     //    val sumItWtihTimeout = sumWithTimeout(1 to 10)
     //    println(run(es)(sumItWtihTimeout).get(1, TimeUnit.NANOSECONDS))
