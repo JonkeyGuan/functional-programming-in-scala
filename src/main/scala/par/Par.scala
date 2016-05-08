@@ -57,6 +57,10 @@ object Par {
 
   def asyncF[A, B](f: A => B): A => Par[B] = a => lazyUnit(f(a))
 
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] = map2(parList: Par[List[Int]], unit(()))((a, _) => a.sorted)
+
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] = map2(pa: Par[A], unit())((a, _) => f(a))
+
   def main(args: Array[String]): Unit = {
 
     def sum(ints: IndexedSeq[Int]): Par[Int] =
@@ -85,9 +89,13 @@ object Par {
         Par.map2WtihTimeout(Par.fork(sumWithTimeout(l)), Par.fork(sumWithTimeout(r)))(_ + _)
       }
 
-    val sumItWtihTimeout = sumWithTimeout(1 to 10)
-    println(run(es)(sumItWtihTimeout).get(1, TimeUnit.NANOSECONDS))
-    es.shutdown()
+    println(run(es)(sortPar(unit(List(2, 1, 3, 4, 2)))).get)
+    println(run(es)(map(unit(1))(_ + 100)).get)
+
+    //    val sumItWtihTimeout = sumWithTimeout(1 to 10)
+    //    println(run(es)(sumItWtihTimeout).get(1, TimeUnit.NANOSECONDS))
+    //    es.shutdown()
+
   }
 
 }
