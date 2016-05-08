@@ -113,7 +113,7 @@ object Par {
         Par.map2(Par.fork(sum(l)), Par.fork(sum(r)))(_ + _)
       }
 
-    val es: ExecutorService = Executors.newWorkStealingPool(10)
+    val es: ExecutorService = Executors.newCachedThreadPool()
     val sumIt = sum(1 to 10)
     println(run(es)(sumIt).get)
 
@@ -146,6 +146,13 @@ object Par {
     println(run(es)(map5(unit(1), unit(2), unit(3), unit(4), unit(5))(_ + _ + _ + _ + _)).get)
     println(equal(es)(unit(1), unit(1)))
     println(equal(es)(unit(1), unit(2)))
+
+//    val a = lazyUnit(42 + 1)
+//    val S = Executors.newFixedThreadPool(1)
+//    println(Par.equal(S)(a, fork(a)))
+
+    
+    
   }
 
 }
