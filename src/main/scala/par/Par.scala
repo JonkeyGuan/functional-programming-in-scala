@@ -100,6 +100,8 @@ object Par {
 
   def equal[A](e: ExecutorService)(p: Par[A], p2: Par[A]): Boolean = p(e).get == p2(e).get
 
+  def delay[A](fa: => Par[A]): Par[A] = es => fa(es)
+
   def main(args: Array[String]): Unit = {
 
     def sum(ints: IndexedSeq[Int]): Par[Int] =
@@ -147,12 +149,10 @@ object Par {
     println(equal(es)(unit(1), unit(1)))
     println(equal(es)(unit(1), unit(2)))
 
-//    val a = lazyUnit(42 + 1)
-//    val S = Executors.newFixedThreadPool(1)
-//    println(Par.equal(S)(a, fork(a)))
+    //    val a = lazyUnit(42 + 1)
+    //    val S = Executors.newFixedThreadPool(1)
+    //    println(Par.equal(S)(a, fork(a)))
 
-    
-    
   }
 
 }
