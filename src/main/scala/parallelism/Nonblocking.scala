@@ -80,11 +80,16 @@ object Nonblocking {
 
   def main(args: Array[String]): Unit = {
     import Par._
-    val es = Executors.newFixedThreadPool(1);
+    val es = Executors.newFixedThreadPool(5);
     val p = parMap(List.range(1, 10))(math.sqrt(_))
     val x = run(es)(p)
     println(x)
     es.shutdown()
+
+    val fu = new Future[String] {
+      def apply(a: String => Unit): Unit = a("123")
+    }
+    fu(a => println(a.toInt + 100))
   }
 
 }
