@@ -20,8 +20,8 @@ object Nonblocking {
       val ref = new AtomicReference[A]
       val latch = new CountDownLatch(1)
       p(es) { a => ref.set(a); latch.countDown }
-//      val future = p(es)
-//      future { a => ref.set(a); latch.countDown }
+      //      val future = p(es)
+      //      future.apply { a => ref.set(a); latch.countDown }
       latch.await
       ref.get
     }
