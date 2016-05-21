@@ -124,6 +124,18 @@ object Run {
     val gen3 = Gen.listOfN(3, gen2)
     val s3 = Prop.randomStream(gen3)(rng)
     println(s3.take(3).toList)
+
+    val p = Prop.forAll(gen2)(_ < 10)
+    println(p.run(3, 4, rng))
+
+    val p1 = Prop.forAll(gen2)(_ == 10)
+    println(p1.run(1, 1, rng))
+
+    val p2 = Prop.forAll(gen2)(_ > 10)
+    println(p2.run(1, 1, rng))
+
+    val p3 = p1 || p2
+    println(p3.run(1, 1, rng))
   }
 }
 
